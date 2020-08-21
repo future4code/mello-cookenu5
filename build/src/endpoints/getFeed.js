@@ -25,7 +25,6 @@ function getFeed(req, res) {
             const tokenData = yield Authenticator_1.default.getTokenData(token);
             const followId = tokenData.id;
             const feed = yield new RecipesDatabase_1.default().feed(followId);
-            console.log(feed.RowDataPacket);
             res.status(200).send({
                 "id": feed.id,
                 "titulo": feed.tittle,

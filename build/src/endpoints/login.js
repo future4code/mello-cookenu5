@@ -26,7 +26,7 @@ function login(req, res) {
             if (!email || !password) {
                 throw new Error("Prencha corretamente os campos.");
             }
-            const token = yield Authenticator_1.default.generateToken(user.id);
+            const token = yield Authenticator_1.default.generateToken({ id: user.id, role: user.role });
             const isPasswordCorrect = yield HashManager_1.default.compare(password, user.password);
             if (!isPasswordCorrect) {
                 throw new Error("Dados incorretos");

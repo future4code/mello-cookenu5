@@ -5,5 +5,7 @@ class IdGenerator {
     static execute() {
         return uuid_1.v4();
     }
+    ;
 }
 exports.default = IdGenerator;
+;

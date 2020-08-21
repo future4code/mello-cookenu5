@@ -23,7 +23,8 @@ const jwt = __importStar(require("jsonwebtoken"));
 class Authenticator {
     static generateToken(input) {
         return jwt.sign({
-            id: input
+            id: input.id,
+            role: input.role
         }, process.env.JWT_KEY, {
             expiresIn: process.env.JWT_EXPIRES_IN
         });

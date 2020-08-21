@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const RecipesDatabase_1 = __importDefault(require("../data/RecipesDatabase"));
 const Authenticator_1 = __importDefault(require("../service/Authenticator"));
+const moment_1 = __importDefault(require("moment"));
 function getRecipeById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -25,11 +26,12 @@ function getRecipeById(req, res) {
             ;
             const tokenData = Authenticator_1.default.getTokenData(token);
             const result = yield new RecipesDatabase_1.default().getRecipeById(id);
+            const formatDate = moment_1.default(result.createdAt, 'YYYY-MM-DD');
             res.status(200).send({
                 "id": result.id,
                 "titulo": result.tittle,
                 "description": result.description,
-                "createdAt": result.createdAt
+                "createdAt": formatDate.format('DD-MM-YYYY')
             });
         }
         catch (error) {

@@ -19,17 +19,17 @@ const IdGenerator_1 = __importDefault(require("../service/IdGenerator"));
 function createUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { name, email, password } = req.body;
+            const { name, email, password, role } = req.body;
             const id = IdGenerator_1.default.execute();
             const cypherText = yield HashManager_1.default.hash(password);
             if (!name || !email || !password) {
                 throw new Error("Todos os campos são obrigatórios.");
             }
             if (password.length < 6) {
-                throw new Error("sua senha precisa ter no mínimo 6 caracteres.");
+                throw new Error("Sua senha precisa ter no mínimo 6 caracteres.");
             }
-            yield new UserDatabase_1.UserDB().createUser(name, email, cypherText, id);
-            const token = Authenticator_1.default.generateToken({ id });
+            yield new UserDatabase_1.UserDB().createUser(name, email, cypherText, id, role);
+            const token = Authenticator_1.default.generateToken({ id, role });
             res
                 .status(200)
                 .send({
