@@ -12,40 +12,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const UserDatabase_1 = require("../data/UserDatabase");
 const Authenticator_1 = __importDefault(require("../service/Authenticator"));
-function getProfile(req, res) {
+const UserDatabase_1 = require("../data/UserDatabase");
+function deleteUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const id = req.params.id;
             const token = req.headers.authorization;
             const tokenData = yield Authenticator_1.default.getTokenData(token);
-            if (!tokenData) {
-                throw new Error("Forneça informações corretamente.");
+            const role = tokenData.role;
+            const id = req.params.id;
+            const user = yield new UserDatabase_1.UserDB().getUserById(id);
+            if (user.length < 0) {
+                throw new Error("Usário não encontrado. ");
             }
-            ;
-            console.log(id);
-            if (id) {
-                const user = yield new UserDatabase_1.UserDB().getUserById(id);
-                console.log(user);
-                if (!user) {
-                    throw new Error("Usuário não encontrado.");
-                }
-                ;
-                res.status(200).send({
-                    "email": user.email,
-                    "name": user.name
-                });
+            if (role !== "ADMIN") {
+                throw new Error("Não autorizado!");
             }
             else {
-                const user = yield new UserDatabase_1.UserDB().getUserById(tokenData.id);
-                if (!user) {
-                    throw new Error("Usuário não encontrado.");
-                }
-                ;
+                yield new UserDatabase_1.UserDB().deleteUser(id);
                 res.status(200).send({
-                    "email": user.email,
-                    "name": user.name
+                    message: "Deletado com sucesso."
                 });
             }
         }
@@ -56,4 +42,4 @@ function getProfile(req, res) {
         }
     });
 }
-exports.default = getProfile;
+exports.default = deleteUser;

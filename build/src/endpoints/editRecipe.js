@@ -12,48 +12,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const UserDatabase_1 = require("../data/UserDatabase");
+const RecipesDatabase_1 = __importDefault(require("../data/RecipesDatabase"));
 const Authenticator_1 = __importDefault(require("../service/Authenticator"));
-function getProfile(req, res) {
+function editRecipe(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const id = req.params.id;
+            const { recipeId, tittle, description } = req.body;
+            const recipe = yield new RecipesDatabase_1.default().getRecipeById(recipeId);
             const token = req.headers.authorization;
             const tokenData = yield Authenticator_1.default.getTokenData(token);
-            if (!tokenData) {
-                throw new Error("Forneça informações corretamente.");
-            }
-            ;
-            console.log(id);
-            if (id) {
-                const user = yield new UserDatabase_1.UserDB().getUserById(id);
-                console.log(user);
-                if (!user) {
-                    throw new Error("Usuário não encontrado.");
-                }
-                ;
-                res.status(200).send({
-                    "email": user.email,
-                    "name": user.name
-                });
+            if (tokenData.id !== recipe.userId) {
+                throw new Error("Você não pode alterar receitas que não são suas.");
             }
             else {
-                const user = yield new UserDatabase_1.UserDB().getUserById(tokenData.id);
-                if (!user) {
-                    throw new Error("Usuário não encontrado.");
-                }
-                ;
+                yield new RecipesDatabase_1.default().editRecipe(tokenData.id, tittle, description);
                 res.status(200).send({
-                    "email": user.email,
-                    "name": user.name
+                    message: "Receita alterada com sucesso"
                 });
             }
+            ;
         }
         catch (error) {
             res.status(400).send({
                 message: error.message
             });
         }
+        ;
     });
 }
-exports.default = getProfile;
+exports.default = editRecipe;
+;

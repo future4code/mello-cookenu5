@@ -15,10 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserDB = void 0;
 const BaseDatabase_1 = __importDefault(require("./BaseDatabase"));
 class UserDB extends BaseDatabase_1.default {
-    createUser(name, email, password, id) {
+    createUser(name, email, password, id, role) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.getConnection()
-                .insert({ id, name, email, password })
+                .insert({ id, name, email, password, role })
                 .into(UserDB.tableName);
             yield this.destroyConnection();
         });
@@ -46,6 +46,14 @@ class UserDB extends BaseDatabase_1.default {
         });
     }
     ;
+    deleteUser(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.getConnection().raw(`
+        DELETE FROM ${UserDB.tableName} 
+        WHERE id = "${id}"
+        `);
+        });
+    }
 }
 exports.UserDB = UserDB;
 UserDB.tableName = "Users";

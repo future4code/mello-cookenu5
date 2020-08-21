@@ -19,11 +19,15 @@ function getAnotherProfile(req, res) {
         try {
             const token = req.headers.authorization;
             const id = req.params.id;
+            const tokenData = yield Authenticator_1.default.getTokenData(token);
+            if (!tokenData) {
+                throw new Error("Token inválido.");
+            }
+            ;
             if (!token || !id) {
                 throw new Error("Forneça corretamente as informações necessárias.");
             }
             ;
-            const isValid = yield Authenticator_1.default.getTokenData(token);
             const user = yield new UserDatabase_1.UserDB().getUserById(id);
             res.status(200).send({
                 "email": user.email,

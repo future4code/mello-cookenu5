@@ -36,15 +36,39 @@ class RecipeDB extends BaseDatabase_1.default {
     feed(followId) {
         return __awaiter(this, void 0, void 0, function* () {
             const feed = yield this.getConnection().raw(`
-        SELECT * FROM Users
-        JOIN Follow on Follow.followId = Users.id
-        LEFT JOIN Recipes on Recipes.userId = followedId
-        WHERE Users.id = "${followId}"
+            SELECT * FROM Users
+            JOIN Follow on Follow.followId = Users.id
+            LEFT JOIN Recipes on Recipe.userId = followedId
+            WHERE Users.id = "${followId}"
         `);
             return feed[0][0];
         });
     }
     ;
+    editRecipe(userId, tittle, description) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let queryFields = [
+                tittle && `tittle = "${tittle}"`,
+                description && `description = "${description}"`
+            ];
+            queryFields = queryFields.filter(field => field);
+            yield this.getConnection().raw(`
+        UPDATE ${RecipeDB.tableName} 
+        SET ${queryFields.join(",")}
+        WHERE userId = "${userId}"
+    `);
+        });
+    }
+    ;
+    deleteRecipe(recipeId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.getConnection().raw(`
+        DELETE FROM ${RecipeDB.tableName} 
+        WHERE id = "${recipeId}"
+        `);
+        });
+    }
 }
 exports.default = RecipeDB;
-RecipeDB.tableName = "Recipes";
+RecipeDB.tableName = "Recipe";
+;

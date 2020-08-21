@@ -24,10 +24,8 @@ function getProfile(req, res) {
                 throw new Error("Forneça informações corretamente.");
             }
             ;
-            console.log(id);
             if (id) {
                 const user = yield new UserDatabase_1.UserDB().getUserById(id);
-                console.log(user);
                 if (!user) {
                     throw new Error("Usuário não encontrado.");
                 }
@@ -48,6 +46,7 @@ function getProfile(req, res) {
                     "name": user.name
                 });
             }
+            ;
         }
         catch (error) {
             res.status(400).send({
